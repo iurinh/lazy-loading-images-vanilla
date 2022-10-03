@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/128/1933/1933691.png">
+</head>
+<body>
+
+<h1>Tente não sorrir</h1>
+
+<img width="200" height="200">
+<div>
+  <img id="img-17" width="100" height="100">
+  <img id="img-18" width="100" height="100">
+  <img id="img-19" width="100" height="100">
+  <img id="img-20" width="100" height="100">
+  <img id="img-21" width="100" height="100">
+</div>
+<div><img id="img-0"></div>
+<div><img id="img-1"></div>
+<div><img id="img-2"></div>
+<div><img id="img-3"></div>
+<div><img id="img-4"></div>
+<div><img id="img-5"></div>
+<div><img id="img-6"></div>
+<div><img id="img-7"></div>
+<div><img id="img-8"></div>
+<div><img id="img-9"></div>
+<div>
+  <img id="img-22" width="100" height="100">
+  <img id="img-23" width="100" height="100">
+  <img id="img-24" width="100" height="100">
+  <img id="img-25" width="100" height="100">
+  <img id="img-26" width="100" height="100">
+</div>
+<div><img id="img-10"></div>
+<div><img id="img-11"></div>
+<div><img id="img-12"></div>
+<div><img id="img-13"></div>
+<div><img id="img-14"></div>
+<div><img id="img-15"></div>
+<div><img id="img-16"></div>
+<div><img id="img-27" ssp-load-lazy-image="https://i.pinimg.com/originals/5f/c5/83/5fc58360c95a8b38f7e4957f402850c4.jpg"></div>
+<div><img id="img-28" ssp-load-lazy-image="https://i.pinimg.com/originals/0f/33/89/0f3389be4c18cd8d1b6cef33cce80053.png"></div>
+<div><img id="img-29" ssp-load-lazy-image="https://pbs.twimg.com/profile_images/1200960462239739904/JrLKhkY6_400x400.jpg"></div>
+<div><img ssp-load-lazy-image="https://www.shutterstock.com/pt/blog/wp-content/uploads/sites/4/2014/12/img12.jpg?w=960&h=566&crop=1"></div>
+<div><div id="div-test" ssp-load-lazy-image="https://NAO-PRECISA"></div></div>
+<div><div id="div-test-2"></div></div>
+
+</body>
+
+<script>
+/**
+ *  ##### CARREGAMENTO LAZY DE IMAGENS #####
+ *  
+ *  CARREGAMENTO LAZY DE IMAGENS - sspLazyLoadingImage(...images)
+ *  
+ *  SEMPRE que for criar o elemento, adicione um 'id'
+ *  Opções de como usar:
+ *  - Crie uma tag 'img' com o seguinte atributo: 'ssp-load-lazy-image'
+ *  - Crie uma tag 'img' no HTML e no JS envie objetos para função 'sspLazyLoadingImage' com do seguinte formato:
+ *  - --> {id: string, url: string}
+ *  - Elementos que não forem 'img'
+ */
+
+/** Variavel reservada ao 'sspLazyLoadingImage', armazenando informações que serão carregadas na página */
+const _pageImages = []
+/** Variável reservada ao 'sspLazyLoadingImage', utilizada no adiantamento de carregamento da imagem conforme scroll */
+const _distanceFromViewport = 300
+/** Variável reservada ao 'sspLazyLoadingImage', utilizada para carregar elementos de imagem */
+const _selectorSspLazyLoadingImage = 'ssp-load-lazy-image'
+
+const sspLazyLoadingImage = (function(){
+
+  window.addEventListener('scroll', (event) => _loadLazyImage(_pageImages.filter(img => !img.printed), event))
+  window.addEventListener('touchmove', (event) => _loadLazyImage(_pageImages.filter(img => !img.printed), event))  
+  window.addEventListener('load', (event) => {
+    const htmlLazyImages = Array.from(document.querySelectorAll('[' + _selectorSspLazyLoadingImage + ']'))
+    const images = htmlLazyImages.map(img => ({
+      id: img.id,
+      url: img.getAttribute(_selectorSspLazyLoadingImage),
+      element: img
+    }))
+    _sspLazyLoadingImage(...images)
+  });
+
+  function _sspLazyLoadingImage(...images) {    
+    images = _getElementFromImages(images)
+    images = _getUrlFromImages(images)
+
+    _loadError(images)
+
+    images = images.filter(img => img.url) || []
+    _pageImages.push(...images)
+
+    _loadLazyImage(_pageImages.filter(img => !img.printed))
+  }
+
+  function _loadError(images) {
+    images.forEach(img => {
+      if(!img.url) {
+        console.error('ERRO', 'loadError', 'sspLazyLoadingImage', 'IMAGEM deve possuir URL no "' + _selectorSspLazyLoadingImage + '":', img)
+        return
+      }
+
+      if(img.element) {
+        const tagName = img.element.tagName
+        if ((tagName || '').toLowerCase() != 'img') {
+          console.error('ERRO', 'loadError', 'sspLazyLoadingImage', 'IMAGEM deve utilizar tag "img":', img)
+          return
+        }
+      } else {
+        if(!img.id) {
+          console.error('ERRO', 'loadError', 'sspLazyLoadingImage', 'IMAGEM sem ID e/ou sem "' + _selectorSspLazyLoadingImage + '": ', img)
+          return
+        }
+      }
+    })
+  }
+
+  function _getElementFromImages(images) {
+    images.filter(img => !img.element)
+    .forEach(img => img.element = document.getElementById(img.id))
+
+    return images
+  }
+
+  function _getUrlFromImages(images) {
+    images.filter(img => !img.url)
+    .filter(img => img.id)
+    .forEach(img => img.url = document.getElementById(img.id).getAttribute(_selectorSspLazyLoadingImage))
+
+    return images
+  }
+
+  function _loadLazyImage(images, event) {    
+    if(!images || !images.length) return
+    
+    images = images.sort((a, b) => {
+      if(a.element.getBoundingClientRect().top < b.element.getBoundingClientRect().top) return -1
+      if(a.element.getBoundingClientRect().top > b.element.getBoundingClientRect().top) return 1
+      return 0
+    })
+
+    const next = images.shift()
+    
+    const scrollPositionY = (event && event.touches && event.touches.length) ? event.touches[0].clientY : window.scrollY
+    const currentScrollPosition = scrollPositionY + document.documentElement.clientHeight + _distanceFromViewport
+    if(currentScrollPosition > next.element.getBoundingClientRect().top) {
+      next.element.src = next.url
+      next.element.removeAttribute(_selectorSspLazyLoadingImage)
+      next.printed = true
+    }
+    
+    next.element.onload = () => _loadLazyImage(images)
+  }
+
+  return _sspLazyLoadingImage
+})()
+  
+
+
+
+
+  ////////////////////////// TRECHO LOCAL - COMPONENTE /////////////////////////////////////
+    
+  const images = [
+    {element: document.querySelector('img'), url: 'https://img.wallpapic-br.com/i205-741-035/medium/esquilo-terrestre-animais-vida-selvagem-fofos-imagem-de-fundo.jpg'},
+    {id: "img-0", url: "https://i.pinimg.com/736x/b9/ec/be/b9ecbe99414eabb4cf4ed2d981841a50.jpg"},
+    {id: "img-1", url: "https://www.zooplus.pt/magazine/wp-content/uploads/2021/03/kitten-sitzt-boden-768x512-1.jpeg"},
+    {id: "img-2", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOXvu0iypOrF_yqVqEUSHnN6ZRxylU6xedfArbYlCZireVh64gElcL4m2fGRw_oMM6iWA&usqp=CAU"},
+    {id: "img-3", url: "http://s2.glbimg.com/kmbgBzKPL0URISIQenPiAKo4ORI=/e.glbimg.com/og/ed/f/original/2017/08/23/5c147f01-dff6-4952-98a0-9394c88361c2.jpg"},
+    {id: "img-4", url: "https://i.pinimg.com/originals/23/ae/bc/23aebcf4c79c9f604fe90bb9aaa579c3.png"},
+    {id: "img-5", url: "https://assets.folhavitoria.com.br/images/ee9f4800-97df-11ec-bf95-6b8ef7d1bff6--minified.png"},
+    {id: "img-6", url: "https://3.bp.blogspot.com/-Yfx2woETqfM/Wun3o904YtI/AAAAAAAAPN4/S6YQtqj_DxYz7QoZhtmR9YwO9ULeocomwCLcBGAs/s1600/Pikachu%2BPokemon%2Borigem%2Bdesign%2Boriginal.jpg"},
+    {id: "img-7", url: "https://image.cachorrogato.com.br/textimages/cachorrinho-ideal"},
+    {id: "img-8", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc3vZL2ppy7UKEkqiUGqVPh3VaI2oBnGphibPAMs6SzMaNS3cN_s4oaXoRMm1mHB2nh8M&usqp=CAU"},
+    {id: "img-9", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOfH74R6j2r18K39srUgHuyGeJpp1sh4Ml9fN4s58e-C6l_uz9KiDIAVwm4-tYAm5boyw&usqp=CAU"},
+    {id: "img-10", url: "https://2.bp.blogspot.com/-8kN95pWl7LM/Whn-CLO-4bI/AAAAAAAAGrw/bfqwhOfG280i6TdhCqtnv8r0JFCd32CewCLcBGAs/s640/Feltragem%2Bcom%2Bagulha%2B-%2BCachorrinhos%2Bfeltro%2Bartesanato%2Bdiy%2Bhandmade%2Bfelt%2Bfieltro%2Bla%2Bfeltrada.jpg"},
+    {id: "img-11", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrlUI3Q47axg6bFZf2kHRcDRxu9F6C6gyRuw&usqp=CAU"},
+    {id: "img-12", url: "https://pm1.narvii.com/6426/3e2b393095a222e6a86b08201d9a9a6d2d77c2b6_hq.jpg"},
+    {id: "img-13", url: "https://www.petz.com.br/blog/wp-content/uploads/2019/11/tipos-de-hamster-roedor-s%C3%ADrio.jpg"},
+    {id: "img-14", url: "http://pm1.narvii.com/6363/75472d352abfc1453919d6bddc2a17606fdb66af_00.jpg"},
+    {id: "img-15", url: "https://i.pinimg.com/originals/fc/2c/04/fc2c04c139b27b1f9e675f4e7feba2e5.jpg"},
+    {id: "img-16", url: "https://i.pinimg.com/originals/82/eb/60/82eb605da6a0b20ee2f30c43e901af85.png"},
+    {id: "img-17", url: "https://i.pinimg.com/236x/1a/d8/d6/1ad8d65ec09c96b07d14c9357ba2d19d.jpg"},
+    {id: "img-18", url: "https://www.worldanimalprotection.org.br/sites/default/files/styles/600x400/public/media/br_files/tarta.jpg?h=7faab102&itok=fAOrL2yP"},
+    {id: "img-19", url: "https://i.pinimg.com/736x/80/7f/e0/807fe0695dcac1932798b3e6b41e7caa.jpg"},
+    {id: "img-20", url: "https://i.pinimg.com/originals/1a/f8/26/1af82670042302dcee2ec1d64f038fe6.jpg"},
+    {id: "img-21", url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj9AIe78atN0rxoG0msMI61qVf4TT0tg1Ijw&usqp=CAU"},
+    {id: "img-22", url: "https://www.petz.com.br/blog/wp-content/uploads/2020/12/nomes-para-peixes-2.jpg"},
+    {id: "img-23", url: "https://pt.bcdn.biz/Images/2015/4/21/3b126b7f-1c51-43a9-b74b-fc272f85d410.jpg"},
+    {id: "img-24", url: "https://i.pinimg.com/736x/c2/58/bc/c258bc9edfd069cc6816098a492d3a66.jpg"},
+    {id: "img-25", url: "https://i.pinimg.com/736x/64/fa/ec/64faec9e81cdb3b304b349e20b3e570f.jpg"},
+    {id: "img-26", url: "https://1.bp.blogspot.com/-QOX_9iHi2Zc/XSZ4V6bXi1I/AAAAAAAADZQ/44SCXew2PJw8p2JOPPIDrOLGnxQr7WOHQCLcBGAs/s1600/Chinchou.png"},
+    {id: "div-test-2", url: "https://NAO-PRECISA-2"}
+  ]
+
+  window.addEventListener('load', (event) => {
+    sspLazyLoadingImage(...images)
+  });
+
+</script>
+</html>
